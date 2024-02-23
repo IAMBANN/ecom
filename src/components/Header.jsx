@@ -15,7 +15,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import Tooltip from "@mui/material/Tooltip";
+import Tooltip from "@mui/material/Tooltip";//used for to show over effect of username 
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -58,16 +58,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   const userData = JSON.parse(localStorage.getItem("user"));
 
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -106,7 +103,8 @@ export default function PrimarySearchAppBar() {
         </IconButton>
         <p>Cart</p>
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem 
+      >
         <IconButton
           size="large"
           aria-label="account of current user"
@@ -122,8 +120,9 @@ export default function PrimarySearchAppBar() {
   );
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+    <Box sx={{ flexGrow: 1 , backgroundColor:"pink" }} lg={{backgroundColor:"red"}} >
+        {/* DIV and BOX is similar but in box we can use sx properties  */}
+      <AppBar position="static"> 
         <Toolbar>
           <Typography
             variant="h6"
@@ -158,7 +157,6 @@ export default function PrimarySearchAppBar() {
                 aria-label="account of current user"
                 aria-controls={menuId}
                 aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
                 color="inherit"
               >
                 <AccountCircle />

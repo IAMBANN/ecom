@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,32 +12,59 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import * as Yup from "yup";
 // import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 // const defaultTheme = createTheme();
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  const [formData, setFormData] = React.useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = React.useState({
+    email: "",
+    password: "",
+  });
 
-    const userData = JSON.parse(localStorage.getItem("user"));
-    
-    if (
-      userData.email == data.get("email") &&
-      userData.password == data.get("password")
-    ) {
-      console.log("chalta mhare")
-      localStorage.setItem("signedin" , "true")
+  const userData = JSON.parse(localStorage.getItem("user"));
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Validation logic
+    let newErrors = {};
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.trim().length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    // If validation passes, handle form submission (e.g., API call)
+    // localStorage.setItem("signedin", "true")
+    if(formData.email == userData.email && formData.password == userData.password)
+    {
+      localStorage.setItem("signedin", "true")
       window.location.href = "/landing-page"
     }
-    else{
-      console.log("chalna mhare")
-    }
+    
+  else
+  alert("invalid credentials")
   };
 
   return (
@@ -57,8 +85,25 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <form component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          {/* <TextField
+            name="email"
+            label="Email"
+            value={formData.email}
+            onChange={handleChange}
+            error={!!errors.email}
+            helperText={errors.email}
+          />
           <TextField
+            type="password"
+            name="password"
+            label="Password"
+            value={formData.password}
+            onChange={handleChange}
+            error={!!errors.password}
+            helperText={errors.password}
+          /> */}
+                    <TextField
             margin="normal"
             required
             fullWidth
@@ -67,6 +112,11 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            value={formData.email}
+            onChange={handleChange}
+            error={!!errors.email}
+            helperText={errors.email}
+            
           />
           <TextField
             margin="normal"
@@ -77,6 +127,10 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            value={formData.password}
+            onChange={handleChange}
+            error={!!errors.password}
+            helperText={errors.password}
           />
           <Button
             type="submit"
@@ -88,12 +142,12 @@ export default function SignIn() {
           </Button>
           <Grid container>
             <Grid item>
-              <Link href="/signup" variant="body2">
+              <Link href="/" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
           </Grid>
-        </Box>
+        </form>
       </Box>
     </Container>
     // </ThemeProvider>

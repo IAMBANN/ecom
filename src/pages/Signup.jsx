@@ -16,24 +16,86 @@ import Container from "@mui/material/Container";
 // const defaultTheme = createTheme();
 
 export default function SignUp() {
+  const [formData, setFormData] = React.useState({
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+  });
+  const [errors, setErrors] = React.useState({
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+  });
+
+  const userData = JSON.parse(localStorage.getItem("user"));
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    let newErrors = {};
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.trim().length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
 
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "firstName is required";
+    } else if (formData.firstName.trim().length < 3) {
+      newErrors.firstName = "firstName greater than 3 characters";
+    }
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "lastName is required";
+    } else if (formData.lastName.trim().length < 3) {
+      newErrors.lastName = "lastName greater than 3 characters";
+    }
 
-    var user = {
-      firstName: data.get("firstName"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
-    };
-
-    console.log("user==>>", user);
-
-    localStorage.setItem("user", JSON.stringify(user));
-
-    window.location.href = "/signin"
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    // If validation passes, handle form submission (e.g., API call)
+    // localStorage.setItem("signedin", "true")
+    // if (
+    //   formData.email == userData.email &&
+    //   formData.password == userData.password &&
+    //   formData.firstName == userData.firstName &&
+    //   formData.lastName == userData.lastName
+    // ) {
+    //   localStorage.setItem("signedin", "true");
+    //   window.location.href = "/signin";
+    // } else alert("invalid credentials");
+    localStorage.setItem("user", JSON.stringify(formData))
+    window.location.href = "/signin";
   };
+
+  var user = {
+    firstName: formData.firstName,
+    lastName: formData.LastName,
+    email: formData.email,
+    password: formData.password,
+  };
+
+  console.log("user==>>", user);
+
+  localStorage.setItem("user", JSON.stringify(user));
+
+  // window.location.href = "/signin";
 
   return (
     // <ThemeProvider theme={defaultTheme}>
@@ -64,6 +126,10 @@ export default function SignUp() {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                value={formData.firstName}
+                onChange={handleChange}
+                error={!!errors.firstName}
+                helperText={errors.firstName}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -74,6 +140,10 @@ export default function SignUp() {
                 label="Last Name"
                 name="lastName"
                 autoComplete="family-name"
+                value={formData.lastName}
+                onChange={handleChange}
+                error={!!errors.lastName}
+                helperText={errors.lastName}
               />
             </Grid>
             <Grid item xs={12}>
@@ -84,6 +154,10 @@ export default function SignUp() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                value={formData.email}
+                onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
               />
             </Grid>
             <Grid item xs={12}>
@@ -94,7 +168,11 @@ export default function SignUp() {
                 label="Password"
                 type="password"
                 id="password"
-                autoComplete="new-password"
+                autoComplete="password"
+                value={formData.password}
+                onChange={handleChange}
+                error={!!errors.password}
+                helperText={errors.password}
               />
             </Grid>
           </Grid>
@@ -108,7 +186,7 @@ export default function SignUp() {
           </Button>
           <Grid container>
             <Grid item>
-              <Link href="/" variant="body2">
+              <Link href="/signin" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>
